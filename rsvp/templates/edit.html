@@ -128,7 +128,7 @@
                 {% for cq in choice_questions %}  
                     <tr>  
                         <td>  <li><strong>{{ cq.question_text }}</strong></li> </td>
-                        <td><strong>Vendors: </strong><select>
+                        <td><strong>Vendors: </strong><select id="cv2{{cq.id}}">
                             {% for vendor in vendors %}
                             <option>{{vendor.user.name}}</option>
                             {% endfor %}
@@ -143,7 +143,7 @@
                             {% csrf_token %}
                              <input type="submit" value="Can view" class="btn btn btn-primary btn-block">
                         </form>  --> 
-                        <button class="btn btn primary btn-block" onclick="canView2(cq.id)">Can view</button> 
+                        <button class="btn btn primary btn-block" onclick="canView2({{cq.id}})">Can view</button> 
                         </td>
                     </tr> 
 
@@ -155,7 +155,7 @@
 </div>  
  {% block javascript %}
     <script>
-
+    //text qustion ajax post
     function canView1(id){
         console.log(id)
         var text = $("#"+"cv1"+id+" option:selected").text()
@@ -173,26 +173,25 @@
             }
         })
     }
-    // $('.can-view1').on('submit',function(e){
-    //     console.log("click can-view1 on question"+$(this).input.id)
-    //     e.preventDefault()
-        // $.ajax({
-        //     url: '/rsvp/create_question/?id={{event.id}}',
-        //     type: "POST",
-        //     data: {
-        //         'question_text':$('#the_post').val(),
-        //         csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
-        //     },
-        //     success: function(data){
-        //         console.log(data)
-        //         $('#the_post').val('')
-        //         $("#questions_table").prepend("<tr><td><li><strong>"+data.text+"</strong></li></td><td><strong>Vendors: </strong><select id='sel0'></select></td></tr>")
-        //         for (c in data.vendors) {
-        //             $('#sel0').append("<option>"+data.vendors[c]+"</option>")
-        //         }
-        //     }
-        // })
-    // });
+    //multiple choice ajax post
+    function canView2(id){
+        console.log(id)
+        var text = $("#"+"cv2"+id+" option:selected").text()
+        console.log(text)
+        $.ajax({
+            url: '/rsvp/can_view2/?id='+id,
+            type: "POST",
+            data: {
+                'cq_id': id,
+                'vendor_name': $("#"+"cv2"+id+" option:selected").text(),
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(data){
+                console.log(data)
+            }
+        })
+    }
+
     $('#post-form').on('submit',function(e){
         console.log("click submit on event")
         e.preventDefault()

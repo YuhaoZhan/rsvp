@@ -187,6 +187,28 @@ def can_view1(req):
             content_type = "application/json"
         )
 
+def can_view2(req):
+    if req.POST:
+        cq_id = req.POST.get("cq_id","")
+        cq = ChoiceQuestion.objects.get(pk=cq_id)
+        vendor_name = req.POST.get("vendor_name","")
+        vendor = Vendor.objects.get(user__name=vendor_name)
+        cq.vendors.add(vendor)
+        cq.save()
+        response_data = {}
+        response_data['result'] = 'vendor can view successful'
+        response_data['text'] = cq.question_text
+        response_data['vendors'] = vendor_name
+        return HttpResponse(
+            json.dumps(response_data),
+            content_type = "application/json"
+        )
+    else:
+        return HttpResponse(
+            json.dumps({"nothing to see": "this isnt happening"}),
+            content_type = "application/json"
+        )
+
 def viewroom(req):  
     username = req.session.get('username', '')  
     if username != '':  
