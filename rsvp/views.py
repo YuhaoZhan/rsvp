@@ -6,7 +6,7 @@ from django.template import  RequestContext
 from django.http import HttpResponseRedirect  
 from django.contrib.auth.models import User 
 from django.contrib import auth  
-from models import *
+from .models import *
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 import json
@@ -84,7 +84,24 @@ def detail1(req):
     content = {"user":user,"event":event}  
     return render(req,'detail1.html',content)  
 
- 
+def detail3(req):
+    username = req.session.get('username','')  
+    if username != '':  
+        user = MyUser.objects.get(user__username=username)  
+    else:  
+        user = ''  
+    Id = req.GET.get("id","") 
+    req.session["id"]=Id  
+    if Id == "":  
+        return HttpResponseRedirect('/rsvp/myevents/')  
+    try:  
+        event = Event.objects.get(pk=Id) 
+    except:               
+        return HttpResponseRedirect('/rsvp/myevents/')   
+    content = {"user":user,"event":event}  
+    return render(req,'detail3.html',content)
+
+
 def get_order_list():  
     num_list=set()  
     order_list=Order.objects.all()  
