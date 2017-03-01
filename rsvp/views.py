@@ -105,6 +105,10 @@ def create_question(req):
     if req.POST:
         question_text = req.POST.get("question_text","")
         event = Event.objects.get(pk=Id)
+        vendors = event.vendors.all()
+        vendorList = []
+        for vendor in vendors:
+            vendorList.append(vendor.user.name)
         q = TextQuestion(event=event,question_text=question_text)
         q.save()
         response_data = {}
@@ -112,6 +116,7 @@ def create_question(req):
         response_data['question_id'] = q.pk
         response_data['text'] = q.question_text
         response_data['author'] = username
+        response_data['vendors'] = vendorList
         return HttpResponse(
             json.dumps(response_data),
             content_type = "application/json"

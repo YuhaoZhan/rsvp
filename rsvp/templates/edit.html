@@ -80,7 +80,12 @@
             <tbody>  
                 {% for tq in text_questions %}  
                     <tr>  
-                        <td>  <li><strong>{{ tq.question_text }}</strong></li> </td>   
+                        <td>  <li><strong>{{ tq.question_text }}</strong></li> </td>
+                        <td><strong>Vendors: </strong><select>
+                            {% for vendor in vendors %}
+                            <option>{{vendor.user.name}}</option>
+                            {% endfor %}
+                        </select></td>   
                     </tr> 
 
                 {% endfor %}  
@@ -137,7 +142,10 @@
             success: function(data){
                 console.log(data)
                 $('#the_post').val('')
-                $("#questions_table").prepend("<tr><td><li><strong>"+data.text+"</strong></li></td></tr>")
+                $("#questions_table").prepend("<tr><td><li><strong>"+data.text+"</strong></li></td><td><strong>Vendors: </strong><select id='sel0'></select></td></tr>")
+                for (c in data.vendors) {
+                    $('#sel0').append("<option>"+data.vendors[c]+"</option>")
+                }
             }
         })
     });
