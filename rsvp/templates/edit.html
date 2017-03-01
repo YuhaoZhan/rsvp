@@ -4,9 +4,6 @@
   
 {% block content %}  
  
- .question {
-    margin: 10px, 20px;
- }
 
 <div class="container">  
     <div class="row">  
@@ -102,13 +99,10 @@
         <div class="col-md-1">  
             <input type="number" class="form-control" id="choicenumber" min="2" placeholder="2">
         </div>
-        <!-- <div class="col-md-2">
-            <button class="btn btn-primary btn-block" id = "render_choice" name = "render" onclick="addChoices()"> Choice </button> 
-        </div> -->
         <div class="col-md-2">
-            <button class="btn btn-primary btn-block" id = "render_choice" name = "render"> Choice </button> 
+            <input type="submit" class="btn btn-primary btn-block" id="btn2" value="Add">
         </div>
-        <div id = "container" class="question col-md-8 col-md-offset-2"></div> 
+        <div id = "container" class="question col-md-8" style="margin-top: 20px"></div> 
     </form> 
 </div>  
  {% block javascript %}
@@ -130,23 +124,23 @@
             }
         })
     });
-    function addChoices(){
-        var number = document.getElementById("choicenumber").value;
-        var container = document.getElementById("container");
-        while (container.hasChildNodes()) {
-            container.removeChild(container.lastChild);
-        }
-        for (i=0;i<number;i++){
-            container.appendChild(document.createTextNode("choice " + (i+1)));
-            var input = document.createElement("input");
-            input.type = "text";
-            input.id = "choice" + (i+1);
-            container.appendChild(input);
-                // Append a line break 
-            container.appendChild(document.createElement("br"));
-        }
-        container.appendChild(document.createElement("button"))
-    }
+    $('#post-form2').on('submit',function(e){
+        console.log("click submit on event")
+        //e.preventDefault()
+        // $.ajax({
+        //     url: '/rsvp/create_question/?id={{event.id}}',
+        //     type: "POST",
+        //     data: {
+        //         'question_text':$('#the_post').val(),
+        //         csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+        //     },
+        //     success: function(data){
+        //         console.log(data)
+        //         $('#the_post').val('')
+        //         $("#questions_table").prepend("<tr><td><li><strong>"+data.text+"</strong></li></td></tr>")
+        //     }
+        // })
+    });
     $('#choicenumber').on('change',function(){
         var number = this.value;
         $('#container').html('');

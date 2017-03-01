@@ -31,7 +31,7 @@ class Event(models.Model):
 class ChoiceQuestion(models.Model):
     event = models.ForeignKey(Event,on_delete=models.CASCADE)
     question_text = models.CharField(max_length=100)
-    visible = models.BooleanField(default=True)
+    vendors = models.ManyToManyField(Vendor,blank=True)
 
 class Choice(models.Model):
     question = models.ForeignKey(ChoiceQuestion, on_delete=models.CASCADE)
@@ -44,7 +44,7 @@ class ChoiceResponse(models.Model):
 class TextQuestion(models.Model):
     event = models.ForeignKey(Event,on_delete=models.CASCADE)
     question_text = models.CharField(max_length=100)
-    visible = models.BooleanField(default=True)
+    vendors = models.ManyToManyField(Vendor,blank=True)
 
 class TextResponse(models.Model):
     question = models.ForeignKey(TextQuestion,on_delete=models.CASCADE)
