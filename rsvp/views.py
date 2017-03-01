@@ -146,11 +146,37 @@ def create_multi_choices_question(req):
         for c_text in choices:
             c = Choice(question=q,choice_text=c_text)
             c.save()
+        vendorList = []
+        for vendor in vendors:
+            vendorList.append(vendor.user.name)
         response_data = {}
         response_data['result'] = 'Create question successful'
         response_data['choices'] = choices
         response_data['text'] = q.question_text
         response_data['author'] = username
+        response_data['vendors'] = vendorList
+        return HttpResponse(
+            json.dumps(response_data),
+            content_type = "application/json"
+        )
+    else:
+        return HttpResponse(
+            json.dumps({"nothing to see": "this isnt happening"}),
+            content_type = "application/json"
+        )
+
+def can_view1(req):
+    if req.POST:
+        tq_id = req.POST.get("tq_id","")
+        tq = TextQuestion.objects.get(pk=tq_id)
+        vendor_name = req.POST.get("vendor_name","")
+        vendor = Vendor.objects.get(user__name=vendor_name)
+        tq.vendors.add(vendor)
+        tq.save()
+        response_data = {}
+        response_data['result'] = 'vendor can view successful'
+        response_data['text'] = tq.question_text
+        response_data['vendors'] = vendor_name
         return HttpResponse(
             json.dumps(response_data),
             content_type = "application/json"

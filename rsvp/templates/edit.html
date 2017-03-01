@@ -81,11 +81,20 @@
                 {% for tq in text_questions %}  
                     <tr>  
                         <td>  <li><strong>{{ tq.question_text }}</strong></li> </td>
-                        <td><strong>Vendors: </strong><select>
+                        <td><strong>Vendors: </strong>
+                        <select id="cv1{{tq.id}}">
                             {% for vendor in vendors %}
                             <option>{{vendor.user.name}}</option>
                             {% endfor %}
-                        </select></td>   
+                        </select></td>
+                        <td>
+                        <!-- <form method="POST" class="can-view1"> 
+                            {% csrf_token %}
+                             <input type="submit" value="Can view" class="btn btn btn-primary btn-block" id="{{tq.id}}">
+                        </form> -->
+                        <button class="btn btn primary btn-block" onclick="canView1({{tq.id}})">Can view</button> 
+                        </td>
+                        </td>   
                     </tr> 
 
                 {% endfor %}  
@@ -118,7 +127,24 @@
             <tbody>  
                 {% for cq in choice_questions %}  
                     <tr>  
-                        <td>  <li><strong>{{ cq.question_text }}</strong></li> </td>   
+                        <td>  <li><strong>{{ cq.question_text }}</strong></li> </td>
+                        <td><strong>Vendors: </strong><select>
+                            {% for vendor in vendors %}
+                            <option>{{vendor.user.name}}</option>
+                            {% endfor %}
+                        </select></td> 
+                        <td><strong>Choices: </strong><select>
+                            {% for c in cq.choice_set.all %}
+                            <option>{{c.choice_text}}</option>
+                            {% endfor %}
+                        </select></td>
+                        <td>
+                        <!-- <form method="POST" id="can-view2"> 
+                            {% csrf_token %}
+                             <input type="submit" value="Can view" class="btn btn btn-primary btn-block">
+                        </form>  --> 
+                        <button class="btn btn primary btn-block" onclick="canView2(cq.id)">Can view</button> 
+                        </td>
                     </tr> 
 
                 {% endfor %}  
@@ -129,6 +155,44 @@
 </div>  
  {% block javascript %}
     <script>
+
+    function canView1(id){
+        console.log(id)
+        var text = $("#"+"cv1"+id+" option:selected").text()
+        console.log(text)
+        $.ajax({
+            url: '/rsvp/can_view1/?id='+id,
+            type: "POST",
+            data: {
+                'tq_id': id,
+                'vendor_name': $("#"+"cv1"+id+" option:selected").text(),
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(data){
+                console.log(data)
+            }
+        })
+    }
+    // $('.can-view1').on('submit',function(e){
+    //     console.log("click can-view1 on question"+$(this).input.id)
+    //     e.preventDefault()
+        // $.ajax({
+        //     url: '/rsvp/create_question/?id={{event.id}}',
+        //     type: "POST",
+        //     data: {
+        //         'question_text':$('#the_post').val(),
+        //         csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+        //     },
+        //     success: function(data){
+        //         console.log(data)
+        //         $('#the_post').val('')
+        //         $("#questions_table").prepend("<tr><td><li><strong>"+data.text+"</strong></li></td><td><strong>Vendors: </strong><select id='sel0'></select></td></tr>")
+        //         for (c in data.vendors) {
+        //             $('#sel0').append("<option>"+data.vendors[c]+"</option>")
+        //         }
+        //     }
+        // })
+    // });
     $('#post-form').on('submit',function(e){
         console.log("click submit on event")
         e.preventDefault()
@@ -166,9 +230,12 @@
             success: function(data){
                 console.log(data)
                 $('#the_post2').val('')
-                $("#choice_questions_table").prepend("<tr><td><li><strong>"+data.text+"</strong></li></td><td><select id='sel'></select></td></tr>")
+                $("#choice_questions_table").prepend("<tr><td><li><strong>"+data.text+"</strong></li></td><td><select id='sel'></select></td><td><select id='sel2'></select></td></tr>")
                 for (c in data.choices) {
                     $('#sel').append("<option>"+data.choices[c]+"</option>")
+                }
+                for (c in data.vendors) {
+                    $('#sel2').append("<option>"+data.vendors[c]+"</option>")
                 }
             }
         })

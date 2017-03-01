@@ -46,6 +46,10 @@ class TextQuestion(models.Model):
     question_text = models.CharField(max_length=100)
     vendors = models.ManyToManyField(Vendor,blank=True)
 
+    def __unicode__(self):
+        return str(self.id)
+
+
 class TextResponse(models.Model):
     question = models.ForeignKey(TextQuestion,on_delete=models.CASCADE)
     response_text = models.CharField(max_length=100)

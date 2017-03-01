@@ -17,4 +17,5 @@ urlpatterns = [
     url(r'^add/$',views.add),
     url(r'^create_question/$',views.create_question),
     url(r'^create_multi_choices_question/$',views.create_multi_choices_question),
+    url(r'^can_view1/$',views.can_view1),
 ]
