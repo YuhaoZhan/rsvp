@@ -1,0 +1,35 @@
+{% extends "base.html" %}  
+{% load staticfiles %}  
+{% block title %}Create Event{% endblock %}  
+{% block content %}  
+<div class="container">  
+    <div class="row">  
+        <div class="col-md-6 col-md-offset-3 col-sm-10 col-sm-offset-1">  
+            <form action="/rsvp/create/" method="POST" role="form" class="form-horizontal">  
+                {% csrf_token %}  
+                <h1 class="form-signin-heading text-center">New Event</h1>  
+  
+                <div class="form-group">  
+                    <label for="id_event_name" class="col-md-4 control-label">Event Name：</label>  
+                    <div class="col-md-8">  
+                        <input type="text" class="form-control" id="id_event_name" required name="eventname" autofocus>  
+                    </div>      
+                </div>  
+  
+                <div class="form-group">  
+                    <label for="id_eventtime" class="col-md-4 control-label">Event Time：</label>  
+                    <div class="col-md-8">  
+                        <input type="date" class="form-control" required name="eventtime" id="id_eventtime">  
+                    </div>  
+                </div>  
+                <div class="form-group">  
+                    <div class="col-md-4 col-md-offset-4">  
+                        <button class="btn btn btn-primary btn-block" type="submit">Create</button>  
+                    </div>  
+                </div>  
+            </form>  
+        </div>  
+    </div>  
+</div>  
+  
+{% endblock %}  

@@ -1,0 +1,23 @@
+{% extends "base.html" %}  
+{% load staticfiles %}  
+{% block title %}Error{% endblock %}  
+{% block content %}  
+<div class="container">  
+    <div class="row">  
+        <div class="col-md-6 col-md-offset-3 col-sm-10 col-sm-offset-1">  
+            {% if status == 'not_exist_or_passwd_err' %}  
+                <div class="well">  
+                    <h2 class="text-danger text-center">用户不存在或密码错误</h2>  
+                </div>  
+            {% endif %}
+
+            {% if status == 'not_exist' %}
+                <div class="well">  
+                    <h2 class="text-danger text-center">安德鲁草你妈</h2>  
+                </div>  
+            {% endif %}
+        </div>  
+    </div>  
+</div>  
+  
+{% endblock %}  

@@ -1,0 +1,74 @@
+{% extends "base.html" %}  
+{% load staticfiles %}  
+{% block title %}View my events{% endblock %}  
+  
+{% block content %}  
+  
+<div class="container">  
+    <div class="row">  
+        <div class="col-md-10 col-md-offset-1">  
+            <div class="col-md-9 col-md-offset-1">  
+                {% if us_sta == "no" %}  
+                <table class="table table-hover">  
+                    <thead>  
+                        <tr>  
+                            <th>Owner Events Name</th>  
+                            <th>Events Time</th>
+                            <th><a href="/rsvp/create/">New Event</th> 
+                        </tr>  
+                    </thead>  
+                    <tbody>  
+                        {% for event in owner_event %}  
+                        <tr>  
+                            <td> <a href="/rsvp/owner_event/?id={{event.id}}">{{ event.name }}</a></td>  
+                            <td>  {{ event.time }}  </td>  
+                            <td><a href="/rsvp/edit/?id={{event.id}}">Edit</a></td>   
+                        </tr>  
+                        {% endfor %}  
+                    </tbody>  
+                </table> 
+                <table class="table table-hover">  
+                    <thead>  
+                        <tr>  
+                            <th>Vendor Events Name</th>  
+                            <th>Events Time</th>  
+                        </tr>  
+                    </thead>  
+                    <tbody>  
+                        {% for event in vendor_event %}  
+                        <tr>  
+                            <td>  {{ event.name }}  </td>  
+                            <td>  {{ event.time }}  </td> 
+                            <td><a href="/rsvp/edit/?id={{event.id}}">Edit</a></td>   
+                        </tr>  
+                        {% endfor %}  
+                    </tbody>  
+                </table> 
+                <table class="table table-hover">  
+                    <thead>  
+                        <tr>  
+                            <th>Guest Events Name</th>  
+                            <th>Events Time</th>  
+                        </tr>  
+                    </thead>  
+                    <tbody>  
+                        {% for event in guest_event %}  
+                        <tr>  
+                            <td><a href="/rsvp/{{event.name}}/detail">{{ event.name }}</a></td>  
+                            <td>  {{ event.time }}  </td>  
+                            <td><a href="/rsvp/edit/?id={{event.id}}">Edit</a></td>   
+                        </tr>  
+                        {% endfor %}  
+                    </tbody>  
+                </table>    
+                {% else %}  
+                <h2>你还没有预约，请先预约！</h2>  
+                {% endif %}  
+                  
+            </div>  
+        </div>  
+    </div>  
+</div>  
+  
+  
+{% endblock %}  

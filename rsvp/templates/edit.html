@@ -1,0 +1,163 @@
+{% extends "base.html" %}  
+{% load staticfiles %}  
+{% block title %}View my events{% endblock %}  
+  
+{% block content %}  
+ 
+ .question {
+    margin: 10px, 20px;
+ }
+
+<div class="container">  
+    <div class="row">  
+        <div class="col-md-10 col-md-offset-1">  
+            <div class="col-md-9 col-md-offset-1">  
+                <table class="table table-hover">  
+                    <thead>  
+                        <tr>  
+                            <th>Owner Name</th>
+                            <th><a href="/rsvp/add/?id={{event.id}}">Add new owner</th> 
+                        </tr>  
+                    </thead>  
+                    <tbody>  
+                        {% for owner in owners %}  
+                        <tr>  
+                            <td> {{owner.user.name}}</td>  
+                            <!-- <td><a href="/rsvp/edit/?id={{event.id}}">Edit</a></td>    -->
+                        </tr>  
+                        {% endfor %}  
+                    </tbody>  
+                </table> 
+                <table class="table table-hover">  
+                    <thead>  
+                        <tr>  
+                            <th>Vendor Name</th>  
+                            <th><a href="/rsvp/add/?id={{event.id}}">Add new vendor</th> 
+                        </tr>  
+                    </thead>  
+                    <tbody>  
+                        {% for vendor in vendors %}  
+                        <tr>  
+                            <td>  {{ vendor.user.name }}  </td>  
+                            <!-- <td><a href="/rsvp/edit/?id={{order.id}}">Edit</a></td>    -->
+                        </tr>  
+                        {% endfor %}  
+                    </tbody>  
+                </table> 
+                <table class="table table-hover">  
+                    <thead>  
+                        <tr>  
+                            <th>Guest Name</th>  
+                            <th><a href="/rsvp/add/?id={{event.id}}">Add new guest</th> 
+                        </tr>  
+                    </thead>  
+                    <tbody>  
+                        {% for guest in guests %}  
+                        <tr>  
+                            <td>  {{ guest.user.name }}  </td>  
+                            <!-- <td><a href="/rsvp/edit/?id={{order.id}}">Edit</a></td> -->   
+                        </tr> 
+                        {% endfor %}  
+                    </tbody>  
+                </table>      
+            </div> 
+        </div>  
+    </div> 
+    <form method="POST" role="form" class="form-horizontal" id="post-form">  
+        {% csrf_token %}  
+        <h1 class="form-signin-heading text-center">Text Question</h1>  
+        <div class="col-md-7 col-md-offset-2">  
+            <input type="text" class="form-control" required name="question_text" id="the_post" autofocus="">  
+        </div>    
+        <div class="col-md-2">
+        <input type="submit" value="Add" class="btn btn btn-primary btn-block" id="btn">
+        </div>
+        <!-- <button class="btn btn btn-primary btn-block" onclick="myFunction()">add</button> -->
+    </form>
+    <div class="col-md-9 col-md-offset-1"> 
+        <table class="table table-hover" id="questions_table">  
+            <thead>
+                <th>Text Questions</th>  
+            </thead>  
+
+            <tbody>  
+                {% for tq in text_questions %}  
+                    <tr>  
+                        <td>  <li><strong>{{ tq.question_text }}</strong></li> </td>   
+                    </tr> 
+
+                {% endfor %}  
+            </tbody>
+
+        </table>  
+     </div>  
+     <form method="POST" role="form" class="form-horizontal" id="post-form2"> 
+     {% csrf_token %} 
+        <div class="col-md-6 col-md-offset-3"> 
+            <h1 class="form-signin-heading text-center">Multiple-Choice Question</h1>
+        </div>
+        <div class="col-md-7 col-md-offset-1">  
+            <input type="text" class="form-control" required name="choice_text" id="the_post2" autofocus="">  
+        </div>
+        <div class="col-md-1">  
+            <input type="number" class="form-control" id="choicenumber" min="2" placeholder="2">
+        </div>
+        <!-- <div class="col-md-2">
+            <button class="btn btn-primary btn-block" id = "render_choice" name = "render" onclick="addChoices()"> Choice </button> 
+        </div> -->
+        <div class="col-md-2">
+            <button class="btn btn-primary btn-block" id = "render_choice" name = "render"> Choice </button> 
+        </div>
+        <div id = "container" class="question col-md-8 col-md-offset-2"></div> 
+    </form> 
+</div>  
+ {% block javascript %}
+    <script>
+    $('#post-form').on('submit',function(e){
+        console.log("click submit on event")
+        e.preventDefault()
+        $.ajax({
+            url: '/rsvp/create_question/?id={{event.id}}',
+            type: "POST",
+            data: {
+                'question_text':$('#the_post').val(),
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(data){
+                console.log(data)
+                $('#the_post').val('')
+                $("#questions_table").prepend("<tr><td><li><strong>"+data.text+"</strong></li></td></tr>")
+            }
+        })
+    });
+    function addChoices(){
+        var number = document.getElementById("choicenumber").value;
+        var container = document.getElementById("container");
+        while (container.hasChildNodes()) {
+            container.removeChild(container.lastChild);
+        }
+        for (i=0;i<number;i++){
+            container.appendChild(document.createTextNode("choice " + (i+1)));
+            var input = document.createElement("input");
+            input.type = "text";
+            input.id = "choice" + (i+1);
+            container.appendChild(input);
+                // Append a line break 
+            container.appendChild(document.createElement("br"));
+        }
+        container.appendChild(document.createElement("button"))
+    }
+    $('#choicenumber').on('change',function(){
+        var number = this.value;
+        $('#container').html('');
+        for (i=0;i<number;i++){
+            // $('#container').append("<input type='text'/><br/>")
+            $('#container').append("<div class='form-group'><label for='id_event_name' class='col-md-4 control-label'>choice" + (i+1)+"</label><div class='col-md-8'><input type='text' class='form-control choices' required name='choices' autofocus></div></div>")
+        }
+    })
+    </script>
+  
+{% endblock %} 
+
+
+{% endblock %}
