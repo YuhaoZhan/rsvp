@@ -104,6 +104,23 @@
         </div>
         <div id = "container" class="question col-md-8" style="margin-top: 20px"></div> 
     </form> 
+    <div class="col-md-9 col-md-offset-1"> 
+        <table class="table table-hover" id="choice_questions_table">  
+            <thead>
+                <th>Choice Questions</th>  
+            </thead>  
+
+            <tbody>  
+                {% for cq in choice_questions %}  
+                    <tr>  
+                        <td>  <li><strong>{{ cq.question_text }}</strong></li> </td>   
+                    </tr> 
+
+                {% endfor %}  
+            </tbody>
+
+        </table>  
+     </div> 
 </div>  
  {% block javascript %}
     <script>
@@ -124,31 +141,46 @@
             }
         })
     });
+
     $('#post-form2').on('submit',function(e){
+        e.preventDefault()
         console.log("click submit on event")
-        //e.preventDefault()
-        // $.ajax({
-        //     url: '/rsvp/create_question/?id={{event.id}}',
-        //     type: "POST",
-        //     data: {
-        //         'question_text':$('#the_post').val(),
-        //         csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
-        //     },
-        //     success: function(data){
-        //         console.log(data)
-        //         $('#the_post').val('')
-        //         $("#questions_table").prepend("<tr><td><li><strong>"+data.text+"</strong></li></td></tr>")
-        //     }
-        // })
+        var choices = grab_choices()
+
+        $.ajax({
+            url: '/rsvp/create_multi_choices_question/?id={{event.id}}',
+            type: "POST",
+            data: {
+                'question_text':$('#the_post2').val(),
+                'choices[]': choices,
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(data){
+                console.log(data)
+                $('#the_post2').val('')
+                $("#choice_questions_table").prepend("<tr><td><li><strong>"+data.text+"</strong></li></td><td><select id='sel'></select></td></tr>")
+                for (c in data.choices) {
+                    $('#sel').append("<option>"+data.choices[c]+"</option>")
+                }
+            }
+        })
     });
+
     $('#choicenumber').on('change',function(){
         var number = this.value;
         $('#container').html('');
         for (i=0;i<number;i++){
-            // $('#container').append("<input type='text'/><br/>")
             $('#container').append("<div class='form-group'><label for='id_event_name' class='col-md-4 control-label'>choice" + (i+1)+"</label><div class='col-md-8'><input type='text' class='form-control choices' required name='choices' autofocus></div></div>")
         }
     })
+    function grab_choices(){
+        var choices = [];
+        $('.choices').each(function(){
+            console.log($(this).val())
+            choices.push($(this).val())
+        });
+        return choices;
+    }
     </script>
   
 {% endblock %} 

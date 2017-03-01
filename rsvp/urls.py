@@ -15,5 +15,6 @@ urlpatterns = [
     url(r'^create/$',views.create),
     url(r'^edit/$',views.edit),
     url(r'^add/$',views.add),
-    url(r'^create_question/$',views.create_question)
+    url(r'^create_question/$',views.create_question),
+    url(r'^create_multi_choices_question/$',views.create_multi_choices_question),
 ]

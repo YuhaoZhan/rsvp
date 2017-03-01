@@ -122,6 +122,39 @@ def create_question(req):
             content_type = "application/json"
         )
 
+def create_multi_choices_question(req):
+    username = req.session.get('username','')
+    if username != '':
+        user = MyUser.objects.get(user__username=username)
+    else:
+        user = ''
+    Id = req.GET.get("id","") 
+    req.session["id"]=Id  
+    if Id == "":  
+        return HttpResponseRedirect('/rsvp/myevents/')  
+    if req.POST:
+        question_text = req.POST.get("question_text","")
+        choices = req.POST.getlist('choices[]')
+        event = Event.objects.get(pk=Id)
+        q = ChoiceQuestion(event=event,question_text=question_text)
+        q.save()
+        for c_text in choices:
+            c = Choice(question=q,choice_text=c_text)
+            c.save()
+        response_data = {}
+        response_data['result'] = 'Create question successful'
+        response_data['choices'] = choices
+        response_data['text'] = q.question_text
+        response_data['author'] = username
+        return HttpResponse(
+            json.dumps(response_data),
+            content_type = "application/json"
+        )
+    else:
+        return HttpResponse(
+            json.dumps({"nothing to see": "this isnt happening"}),
+            content_type = "application/json"
+        )
 
 def viewroom(req):  
     username = req.session.get('username', '')  
@@ -155,9 +188,10 @@ def edit(req):
         vendors = event.vendors.all()
         guests = event.guests.all() 
         text_questions = event.textquestion_set.all()
+        choice_questions = event.choicequestion_set.all()
     except:               
         return HttpResponseRedirect('/rsvp/myevents/')   
-    content = {"user":user,"event":event,"owners":owners,"vendors":vendors,"guests":guests,"text_questions":text_questions}  
+    content = {"user":user,"event":event,"owners":owners,"vendors":vendors,"guests":guests,"text_questions":text_questions,"choice_questions":choice_questions}  
     return render(req,'edit.html',content)  
 
 #add a new user
