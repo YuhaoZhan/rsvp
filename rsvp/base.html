@@ -35,7 +35,7 @@
                     </ul>  
                     <ul class="nav navbar-nav navbar-right">  
                         {% if user %}              
-                            <li><p class="navbar-text">Welcome <span id="base_name">{{ user }}</span></p></li>  
+                            <li><p class="navbar-text">Welcome <span id="base_name">{{ user.username }}</span></p></li>  
                             <li><a href="/myorder/">View Events</a></li>  
                             <li><a href="/logout/">Logout</a></li>  
                               

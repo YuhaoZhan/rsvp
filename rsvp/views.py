@@ -108,14 +108,30 @@ def detail2(req):
     req.session["id"]=Id
 
     try:  
-        event = Event.objects.get(pk=Id) 
-        choicequestions = event.choicequestion_set.filter(vendors__user__name=username)
-        textquestions = event.textquestion_set.filter(vendors__user__name=username)
+        event = Event.objects.get(pk=Id)
+        guests = event.guests.all()
+        choice_questions = event.choicequestion_set.filter(vendors__user__name=username)
+        text_questions = event.textquestion_set.filter(vendors__user__name=username)
+        text_responses = []
+        choice_responses = []
+        index = 0
+        for guest in guests:
+            text_responses.append([])
+            choice_responses.append([])
+            for text_question in text_questions:
+                text_responses[index].append(text_question.textresponse_set.filter(username=guest.user.name))
+            
+            for choice_question in choice_questions:
+                choice_responses[index].append(choice_question.choice_set.filter(choiceresponse__username=guest.user.name))
+            index += 1
+            
+        zipped_text_responses = zip(guests, text_responses)
+        zipped_choice_responses = zip(guests, choice_responses)
     except:               
-        return HttpResponseRedirect('/rsvp/events/')    
-    
-    content = {"event":event,"choicequestions":choicequestions,"textquestions":textquestions}  
+        return HttpResponseRedirect('/rsvp/myevents/')    
+    content = {"user":user,"event":event, "text_questions":text_questions, "zipped_text_responses":zipped_text_responses, "choice_questions":choice_questions, "zipped_choice_responses":zipped_choice_responses}  
     return render(req,'detail2.html',content)
+
 
 @login_required
 def detail3(req):
@@ -136,7 +152,13 @@ def detail3(req):
         choice_responses = []
 
         for text_question in text_questions:
-            text_responses.append(text_question.textresponse_set.filter(username=username))
+            ts = text_question.textresponse_set.filter(username=username)
+            if ts.count() > 0:
+                text_responses.append(ts.first())
+            else:
+                tmp = TextResponse(question=text_question,response_text="Not answered yet.",username=username)
+                tmp.save()
+                text_responses.append(tmp)
         
         for choice_question in choice_questions:
             cs = choice_question.choice_set.filter(choiceresponse__username=username)

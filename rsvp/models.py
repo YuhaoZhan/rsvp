@@ -60,3 +60,5 @@ class TextResponse(models.Model):
     question = models.ForeignKey(TextQuestion,on_delete=models.CASCADE)
     response_text = models.CharField(max_length=100)
     username = models.CharField(max_length=50,blank=True)
+    def __unicode__(self):
+        return self.response_text

@@ -34,27 +34,17 @@
 			</thead>
 			<tbody>
 				{% for t in text_responses %}
-				{% if t.count > 0 %}
 				<tr>
 				<form method="POST">  
         				{% csrf_token %}
 					<td>
-						<input id="tr{{t.first.id}}" style="height:100%; width:100%;" type="text" value = "{{ t.first.response_text }}"> 
+						<input id="tr{{t.id}}" style="height:100%; width:100%;" type="text" value = "{{ t.response_text }}"> 
 					</td>
 					<td>
-            			<button class="btn btn btn-primary btn-block" style="margin:0px; padding:0px;" onclick="save1({{t.first.id}})">Save Change</button>
+            			<button class="btn btn btn-primary btn-block" style="margin:0px; padding:0px;" onclick="save1({{t.id}})">Save Change</button>
           			</td>  
           		</form> 
-				</tr>
-				{% else %}
-				<tr>
-					<td>  <input style="height:100%; width:100%;" type="text" placeholder="Not answered yet."> </td>	
-				</tr>
-				<td>
-            <button class="btn btn btn-primary btn-block" onclick="save1({{t.first.id}})">Save Change</button> 
-          </td>  
-				{% endif  %}
-				
+				</tr> 
 				{% endfor %}
 				
 			</tbody>
@@ -114,6 +104,7 @@
     function save1(id){
     	event.preventDefault()
         console.log("click save answer btn")
+        console.log(id)
         var text = $("#"+"tr"+id).val()
         console.log(text)
         $.ajax({
