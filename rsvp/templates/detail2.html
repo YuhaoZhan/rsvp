@@ -1,0 +1,91 @@
+{% extends "base.html" %}  
+{% load staticfiles %}  
+{% block title %}View Question Answers{% endblock %}  
+
+{% block content %}  
+
+<div class="col-md-12  col-md-offset-2">
+    <div class = "container col-md-8">
+        {% for item in zipped_text_responses %}
+        <h3>{{item.0.user.name}}</h3>
+        <div class="col-md-6">
+            <table class="table table-hover">
+                <thead>
+                    <th>Text Questions</th>
+                </thead>
+                <tbody>
+                    {% for tq in text_questions %}
+                    <tr>
+                        <td>  {{tq.question_text}}  </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6 col-md">
+            <table class="table table-hover" >
+                <thead>
+                    <th>Responses</th>
+                </thead>
+                <tbody>
+                    {% for t in item.1 %}
+                    {% if t.count > 0 %}
+                    <tr>
+                        <td>{{ t.first.response_text }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td>  Not answered yet.</td>
+                    </tr>
+                    {% endif  %}
+                    {% endfor %}
+                </tbody>
+                
+            </table>
+        </div>
+        {% endfor  %}
+    </div>
+    <div class="container col-md-8">
+        {% for item in zipped_choice_responses %}
+        <h3>{{item.0.user.name}}</h3>
+        <div class="col-md-6 col-md">
+            <table class="table table-hover">
+                <thead>
+                    <th>Choice Questions</th>
+                </thead>
+                
+                <tbody>
+                    {% for cq in choice_questions %}
+                    <tr>
+                        <td>  {{cq.question_text}}  </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6 col-md">
+            <table class="table table-hover" >
+                <thead>
+                    <th>Responses</th>
+                </thead>
+                <tbody>
+                    {% for t in item.1 %}
+                    {% if t.count > 0 %}
+                    <tr>
+                        <td>{{ t.first.choice_text }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td>  Not answered yet.</td>
+                    </tr>
+                    {% endif  %}
+                    {% endfor %}
+                </tbody>
+                
+            </table>
+        </div>
+        {% endfor  %}
+        
+    </div>
+</div>
+{% endblock %}  
