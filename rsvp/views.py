@@ -95,10 +95,21 @@ def detail3(req):
     if Id == "":  
         return HttpResponseRedirect('/rsvp/myevents/')  
     try:  
-        event = Event.objects.get(pk=Id) 
+        event = Event.objects.get(pk=Id)
+        text_questions = event.textquestion_set.all()
+        text_responses = []
+        choice_questions = event.choicequestion_set.all()
+        choice_responses = []
+
+        for text_question in text_questions:
+            text_responses.append(text_question.textresponse_set.filter(username=username))
+        
+        for choice_question in choice_questions:
+            choice_responses.append(choice_question.choice_set.filter(choiceresponse__username=username))
+            
     except:               
         return HttpResponseRedirect('/rsvp/myevents/')   
-    content = {"user":user,"event":event}  
+    content = {"user":user,"event":event,"text_questions":text_questions,"text_responses":text_responses,"choice_questions":choice_questions,"choice_responses":choice_responses}  
     return render(req,'detail3.html',content)
 
 
