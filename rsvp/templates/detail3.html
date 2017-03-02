@@ -4,6 +4,9 @@
   
 {% block content %}  
 
+{% input {display: block; padding: 0; margin: 0; border: 0; width: 100%;}
+td {margin: 0; padding: 0;} %} 
+
 <div class="container">
     <h1>You're a guest looking at {{event.name}} id is {{event.id}}</h1>
 </div>
@@ -27,7 +30,7 @@
 		</table>
 	</div>
 	<div class="col-md-5 col-md">
-		<table class="table table-hover">
+		<table class="table table-hover" >
 			<thead>
 				<th>My Responses</th>
 				</thead>
@@ -35,7 +38,10 @@
 				{% for t in text_responses %}
 				{% if t.count > 0 %}
 				<tr>
-						<td>  {{ t.first.response_text }}</td>
+					<td><input type="text" value = "{{ t.first.response_text }}"/> </td>
+					<td>
+            <button class="btn btn primary btn-block" onclick="canView1({{tq.id}})">Save Change</button> 
+          </td>  
 				</tr>
 				{% else %}
 				<tr>
@@ -59,11 +65,14 @@
 			</thead>
 			
 			<tbody>
-				{% for c in choicequestions %}
+				{% for c in choice_questions %}
 				<tr>
 					<td>  {{ c.question_text }}</td>
 					<td>  {{ c.finalized }} </td>
-					<td><a href="/rsvp/editchoiceresponse/?id={{c.id}}">Edit</td>
+					<td><select> {% for choice in c.choice_set.all %}
+              <option>{{choice.choice_text}}</option>
+              {% endfor %}
+          </select></td>
 				</tr>
 				{% endfor %}
 			</tbody>
@@ -94,7 +103,4 @@
 		
 	</div>
 </div>
-                <!--div class="col-md-3 col-md-offset-4">  
-                    <button class="btn btn-primary btn-block" onclick= "myFunction()" > Add </button>  
-                </div-->                
 {% endblock %}
