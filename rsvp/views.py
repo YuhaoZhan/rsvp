@@ -59,7 +59,7 @@ def logout(req):
     auth.logout(req)  
     return HttpResponseRedirect('/rsvp/')  
 
- 
+@login_required
 def detail1(req):  
     username = req.session.get('username','')
     if username != '':  
@@ -96,6 +96,28 @@ def detail1(req):
     content = {"user":user,"event":event, "text_questions":text_questions, "zipped_text_responses":zipped_text_responses, "choice_questions":choice_questions, "zipped_choice_responses":zipped_choice_responses}  
     return render(req,'detail1.html',content)  
 
+@login_required
+def detail2(req):
+    username = req.session.get('username','')  
+    if username != '':  
+        user = MyUser.objects.get(user__username=username)  
+    else:  
+        user = ''  
+
+    Id = req.GET.get("id","")
+    req.session["id"]=Id
+
+    try:  
+        event = Event.objects.get(pk=Id) 
+        choicequestions = event.choicequestion_set.filter(vendors__user__name=username)
+        textquestions = event.textquestion_set.filter(vendors__user__name=username)
+    except:               
+        return HttpResponseRedirect('/rsvp/events/')    
+    
+    content = {"event":event,"choicequestions":choicequestions,"textquestions":textquestions}  
+    return render(req,'detail2.html',content)
+
+@login_required
 def detail3(req):
     username = req.session.get('username','')  
     if username != '':  

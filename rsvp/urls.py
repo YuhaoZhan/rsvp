@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^myevents/$',views.myevents),  
     url(r'^viewroom/$',views.viewroom),  
     url(r'^owner_event/$',views.detail1),
+    url(r'^guest_event/$',views.detail2),
     url(r'^guest_event/$',views.detail3),
     url(r'^create/$',views.create),
     url(r'^edit/$',views.edit),
