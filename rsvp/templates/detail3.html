@@ -1,11 +1,8 @@
 {% extends "base.html" %}  
 {% load staticfiles %}  
-{% block title %}查看会议室{% endblock %}  
+{% block title %}View Guest Event{% endblock %}  
   
 {% block content %}  
-
-{% input {display: block; padding: 0; margin: 0; border: 0; width: 100%;}
-td {margin: 0; padding: 0;} %} 
 
 <div class="container">
     <h1>You're a guest looking at {{event.name}} id is {{event.id}}</h1>
@@ -14,7 +11,7 @@ td {margin: 0; padding: 0;} %}
 
 <div class="col-md-12 col-md-offset-0">
 	<h3>Guest Questions</h3>
-	<div class="col-md-5 col-md">
+	<div class="col-md-7 col-md">
 		<table class="table table-hover">
 			<thead>
 				<th>Text Questions</th>
@@ -29,26 +26,35 @@ td {margin: 0; padding: 0;} %}
 			</tbody>
 		</table>
 	</div>
-	<div class="col-md-5 col-md">
+	<div class="col-md-4 col-md">
 		<table class="table table-hover" >
 			<thead>
 				<th>My Responses</th>
-				</thead>
+				<th>Edit</th>
+			</thead>
 			<tbody>
 				{% for t in text_responses %}
 				{% if t.count > 0 %}
 				<tr>
-					<td><input type="text" value = "{{ t.first.response_text }}"/> </td>
+				<form method="POST">  
+        				{% csrf_token %}
 					<td>
-            <button class="btn btn primary btn-block" onclick="canView1({{tq.id}})">Save Change</button> 
-          </td>  
+						<input id="tr{{t.first.id}}" style="height:100%; width:100%;" type="text" value = "{{ t.first.response_text }}"> 
+					</td>
+					<td>
+            			<button class="btn btn btn-primary btn-block" style="margin:0px; padding:0px;" onclick="save1({{t.first.id}})">Save Change</button>
+          			</td>  
+          		</form> 
 				</tr>
 				{% else %}
 				<tr>
-					<td>  Not answered yet.</td>
-						
+					<td>  <input style="height:100%; width:100%;" type="text" placeholder="Not answered yet."> </td>	
 				</tr>
+				<td>
+            <button class="btn btn btn-primary btn-block" onclick="save1({{t.first.id}})">Save Change</button> 
+          </td>  
 				{% endif  %}
+				
 				{% endfor %}
 				
 			</tbody>
@@ -56,7 +62,7 @@ td {margin: 0; padding: 0;} %}
 		</table>
 	</div>
 	
-	<div class="col-md-4 col-md">
+	<div class="col-md-7 col-md">
 		<table class="table table-hover">
 			<thead>
 				<th>Choice Questions</th>
@@ -69,7 +75,7 @@ td {margin: 0; padding: 0;} %}
 				<tr>
 					<td>  {{ c.question_text }}</td>
 					<td>  {{ c.finalized }} </td>
-					<td><select> {% for choice in c.choice_set.all %}
+					<td><select id="choice{{c.id}}"> {% for choice in c.choice_set.all %}
               <option>{{choice.choice_text}}</option>
               {% endfor %}
           </select></td>
@@ -84,23 +90,66 @@ td {margin: 0; padding: 0;} %}
 		<table class="table table-hover">
 			<thead>
 				<th>My Choices</th>
+				<th>Edit</th>
 			</thead>
 			
 			<tbody>
-				{% for cr in choiceresponse %}
-				{% if cr.count > 0 %}
+				{% for cr in choice_responses %}
 				<tr>
-					<td>  {{cr.first.choice_text}} </td>
+					<td id="c{{cr.first.question.id}}">  {{cr.first.choice_text}} </td>
+					<td>
+            			<button class="btn btn btn-primary btn-block" style="margin:0px; padding:0px;" onclick="save2({{cr.first.question.id}})">Save Change</button> 
+          			</td> 
 				</tr>
-				{% else %}
-				<tr>
-					<td>  Not answered yet </td>
-				</tr>
-				{% endif  %}
+
 				{% endfor %}
 			</tbody>
 		</table>
 		
 	</div>
 </div>
+{% block javascript %}
+    <script>
+    //text qustion ajax post
+    function save1(id){
+    	event.preventDefault()
+        console.log("click save answer btn")
+        var text = $("#"+"tr"+id).val()
+        console.log(text)
+        $.ajax({
+            url: '/rsvp/save1/?id='+id,
+            type: "POST",
+            data: {
+                'tr_id': id,
+                'new_answer': $("#"+"tr"+id).val(),
+                 csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(data){
+                console.log(data)
+            }
+        })
+    }
+    function save2(id){
+    	event.preventDefault()
+        console.log("click save answer btn")
+        console.log(id)
+        var text = $("#"+"choice"+id+" option:selected").text()
+        $("#"+"c"+id).html(text)
+        console.log(text)
+        $.ajax({
+            url: '/rsvp/save2/?id='+id,
+            type: "POST",
+            data: {
+                'cq_id': id,
+                'new_answer': text,
+                 csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(data){
+                console.log(data)
+            }
+        })
+    }
+ </script>
+  
+{% endblock %}   
 {% endblock %}

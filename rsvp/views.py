@@ -6,7 +6,7 @@ from django.template import  RequestContext
 from django.http import HttpResponseRedirect  
 from django.contrib.auth.models import User 
 from django.contrib import auth  
-from .models import *
+from models import *
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 import json
@@ -59,16 +59,9 @@ def logout(req):
     auth.logout(req)  
     return HttpResponseRedirect('/rsvp/')  
 
-def get_acad_list():  
-    room_list = ConfeRoom.objects.all() 
-    acad_list = set()  
-    for room in room_list:  
-        acad_list.add(room.acad)  
-    return list(acad_list)  
-  
  
 def detail1(req):  
-    username = req.session.get('username','')  
+    username = req.session.get('username','')
     if username != '':  
         user = MyUser.objects.get(user__username=username)  
     else:  
@@ -78,10 +71,29 @@ def detail1(req):
     if Id == "":  
         return HttpResponseRedirect('/rsvp/myevents/')  
     try:  
-        event = Event.objects.get(pk=Id) 
+        event = Event.objects.get(pk=Id)
+        guests = event.guests.all()
+        text_questions = event.textquestion_set.all()
+        ''' each array is a response set'''
+        text_responses = []
+        choice_questions = event.choicequestion_set.all()
+        choice_responses = []
+        index = 0
+        for guest in guests:
+            text_responses.append([])
+            choice_responses.append([])
+            for text_question in text_questions:
+                text_responses[index].append(text_question.textresponse_set.filter(username=guest.user.name))
+            
+            for choice_question in choice_questions:
+                choice_responses[index].append(choice_question.choice_set.filter(choiceresponse__username=guest.user.name))
+            index += 1
+            
+        zipped_text_responses = zip(guests, text_responses)
+        zipped_choice_responses = zip(guests, choice_responses)
     except:               
-        return HttpResponseRedirect('/rsvp/myevents/')   
-    content = {"user":user,"event":event}  
+        return HttpResponseRedirect('/rsvp/myevents/')
+    content = {"user":user,"event":event, "text_questions":text_questions, "zipped_text_responses":zipped_text_responses, "choice_questions":choice_questions, "zipped_choice_responses":zipped_choice_responses}  
     return render(req,'detail1.html',content)  
 
 def detail3(req):
@@ -105,8 +117,11 @@ def detail3(req):
             text_responses.append(text_question.textresponse_set.filter(username=username))
         
         for choice_question in choice_questions:
-            choice_responses.append(choice_question.choice_set.filter(choiceresponse__username=username))
-            
+            cs = choice_question.choice_set.filter(choiceresponse__username=username)
+            if cs.count() > 0:
+                choice_responses.append(cs)
+            else:    
+                choice_responses.append(choice_question.choice_set.all())
     except:               
         return HttpResponseRedirect('/rsvp/myevents/')   
     content = {"user":user,"event":event,"text_questions":text_questions,"text_responses":text_responses,"choice_questions":choice_questions,"choice_responses":choice_responses}  
@@ -169,6 +184,7 @@ def create_multi_choices_question(req):
         question_text = req.POST.get("question_text","")
         choices = req.POST.getlist('choices[]')
         event = Event.objects.get(pk=Id)
+        vendors = event.vendors.all()
         q = ChoiceQuestion(event=event,question_text=question_text)
         q.save()
         for c_text in choices:
@@ -236,6 +252,64 @@ def can_view2(req):
             json.dumps({"nothing to see": "this isnt happening"}),
             content_type = "application/json"
         )
+
+def save1(req):
+    if req.POST:
+        tr_id = req.POST.get("tr_id","")
+        tr = TextResponse.objects.get(pk=tr_id)
+        new_answer = req.POST.get("new_answer","")
+        tr.response_text = new_answer
+        tr.save()
+        response_data = {}
+        response_data['result'] = 'vendor can view successful'
+        response_data['text'] = new_answer
+        response_data['tr_id'] = tr.id
+        return HttpResponse(
+            json.dumps(response_data),
+            content_type = "application/json"
+        )
+    else:
+        return HttpResponse(
+            json.dumps({"nothing to see": "this isnt happening"}),
+            content_type = "application/json"
+        )
+
+def save2(req):
+    username = req.session.get('username','')
+    if username != '':
+        user = MyUser.objects.get(user__username=username)
+    else:
+        user = ''
+    if req.POST:
+        cq_id = req.POST.get("cq_id","")
+        cq = ChoiceQuestion.objects.get(pk=cq_id)
+        new_answer = req.POST.get("new_answer","")
+        query_set = cq.choice_set.filter(choiceresponse__username=username)
+        if query_set.count()>0:
+            old_choice = query_set.first()
+            old_response = old_choice.choiceresponse_set.filter(username=username)
+            old_response.first().delete()
+            new_choice = Choice.objects.filter(choice_text=new_answer)
+            new_response = ChoiceResponse(user_choice = new_choice.first(), username=username)
+            new_response.save()
+        else:
+            new_choice = Choice.objects.filter(choice_text=new_answer).first()
+            new_response = ChoiceResponse(user_choice = new_choice,username=username)
+            new_response.save()
+        response_data = {}
+        response_data['result'] = 'save choice response successful'
+        response_data['text'] = new_answer
+        response_data['cq_id'] = cq.id
+        return HttpResponse(
+            json.dumps(response_data),
+            content_type = "application/json"
+        )
+    else:
+        return HttpResponse(
+            json.dumps({"nothing to see": "this isnt happening"}),
+            content_type = "application/json"
+        )
+
 
 def viewroom(req):  
     username = req.session.get('username', '')  

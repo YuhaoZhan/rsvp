@@ -139,10 +139,6 @@
                             {% endfor %}
                         </select></td>
                         <td>
-                        <!-- <form method="POST" id="can-view2"> 
-                            {% csrf_token %}
-                             <input type="submit" value="Can view" class="btn btn btn-primary btn-block">
-                        </form>  --> 
                         <button class="btn btn primary btn-block" onclick="canView2({{cq.id}})">Can view</button> 
                         </td>
                     </tr> 
@@ -229,12 +225,12 @@
             success: function(data){
                 console.log(data)
                 $('#the_post2').val('')
-                $("#choice_questions_table").prepend("<tr><td><li><strong>"+data.text+"</strong></li></td><td><select id='sel'></select></td><td><select id='sel2'></select></td></tr>")
+                $("#choice_questions_table").prepend("<tr><td><li><strong>"+data.text+"</strong></li></td><td><strong>Vendors: </strong><select id='sel'></select></td><td><strong>Choices: </strong><select id='sel2'></select></td></tr>")
                 for (c in data.choices) {
-                    $('#sel').append("<option>"+data.choices[c]+"</option>")
+                    $('#sel2').append("<option>"+data.choices[c]+"</option>")
                 }
                 for (c in data.vendors) {
-                    $('#sel2').append("<option>"+data.vendors[c]+"</option>")
+                    $('#sel').append("<option>"+data.vendors[c]+"</option>")
                 }
             }
         })

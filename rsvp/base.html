@@ -30,18 +30,18 @@
   
                 <div class="collapse navbar-collapse" id="navbar-collapse-basepage">  
                     <ul class="nav navbar-nav">  
-                        <li id="homepage"><a href="/">主页</a></li>  
-                        <li id="viewbook"><a href="/viewroom/">查看</a></li>  
+                        <li id="homepage"><a href="/">HomePage</a></li>  
+                        <li id="viewbook"><a href="/">View</a></li>  
                     </ul>  
                     <ul class="nav navbar-nav navbar-right">  
                         {% if user %}              
-                            <li><p class="navbar-text">欢迎你  <span id="base_name">{{ user }}</span></p></li>  
-                            <li><a href="/myorder/">查看订单</a></li>  
-                            <li><a href="/logout/">注销</a></li>  
+                            <li><p class="navbar-text">Welcome <span id="base_name">{{ user }}</span></p></li>  
+                            <li><a href="/myorder/">View Events</a></li>  
+                            <li><a href="/logout/">Logout</a></li>  
                               
                         {% else %}  
-                            <li><a href="/regist/">注册</a></li>  
-                            <li><a href="/login/">登录</a></li>  
+                            <li><a href="/regist/">Register</a></li>  
+                            <li><a href="/login/">Login</a></li>  
                         {% endif %}  
                     </ul>  
                 </div>  
@@ -52,7 +52,7 @@
         <!-- header -->  
         <header class="jumbotron subhead" id="header-base">  
             <div class="container">  
-                <h1>会议室预约系统</h1>  
+                <h1>ERSS_RSVP</h1>  
             </div>  
         </header>  
         <!-- /.header -->  

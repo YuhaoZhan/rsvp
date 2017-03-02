@@ -33,6 +33,9 @@ class ChoiceQuestion(models.Model):
     question_text = models.CharField(max_length=100)
     vendors = models.ManyToManyField(Vendor,blank=True)
 
+    def __unicode__(self):  
+        return self.question_text
+
 class Choice(models.Model):
     question = models.ForeignKey(ChoiceQuestion, on_delete=models.CASCADE)
     choice_text = models.CharField(max_length=50)
@@ -40,6 +43,9 @@ class Choice(models.Model):
 class ChoiceResponse(models.Model):
     user_choice = models.ForeignKey(Choice,on_delete=models.CASCADE)
     username = models.CharField(max_length=50,blank=True)
+
+    def __unicode__(self):  
+        return self.user_choice.choice_text
 
 class TextQuestion(models.Model):
     event = models.ForeignKey(Event,on_delete=models.CASCADE)

@@ -34,13 +34,13 @@
                 <div class="collapse navbar-collapse" id="navbar-collapse-basepage">  
                     <ul class="nav navbar-nav">  
                         <li id="homepage"><a href="/rsvp/">HomePage</a></li>  
-                        <li id="viewbook"><a href="/rsvp/viewroom/">查看</a></li>  
+                        <li id="viewbook"><a href="/rsvp/">View</a></li>  
                     </ul>  
                     <ul class="nav navbar-nav navbar-right">  
                         {% if user %}              
                             <li><p class="navbar-text">Welcome <span id="base_name">{{ user }}</span></p></li>  
-                            <li><a href="/rsvp/myevents/">查看活动</a></li>  
-                            <li><a href="/rsvp/logout/">注销</a></li>  
+                            <li><a href="/rsvp/myevents/">View Events</a></li>  
+                            <li><a href="/rsvp/logout/">Logout</a></li>  
                               
                         {% else %}  
                             <li><a href="/rsvp/regist/">Register</a></li>  
