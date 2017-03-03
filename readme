@@ -1,0 +1,3 @@
+1. No secured check for password when user register a new account(doesn't require combination of number and letter)
+2. Does not support freezing account feature when malicious users want to hack account by brute force attempt
+3. Does not hash event id in url
