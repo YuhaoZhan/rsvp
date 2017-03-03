@@ -500,7 +500,10 @@ def create(req):
     if req.POST:
     	name = req.POST.get("eventname","")
     	time = req.POST.get("eventtime","")
+        permission = req.POST.get("plusone","")
     	event = Event(name=name, time=time)
+        if permission == "Yes":
+            event.plusone = True
     	event.save()
     	try:
     		o = Owner.objects.get(user=user)

@@ -5,7 +5,12 @@
 {% block content %}  
 
 <div class="container">
-    <h1>You're a guest looking at {{event.name}} id is {{event.id}}</h1>
+	<h1>You're a guest looking at {{event.name}}<h1>
+	{% if event.pluseone == True %}
+    	 <h3>Notice +1(or more) is PERMITTED </h3>
+    {% else %}
+    	<h3>Notice +1(or more) is NOT permitted </h3>
+    {% endif %}
 </div>
   
 

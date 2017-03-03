@@ -27,6 +27,7 @@ class Event(models.Model):
     owners = models.ManyToManyField(Owner, blank=True)
     vendors = models.ManyToManyField(Vendor, blank=True)
     guests = models.ManyToManyField(Guest, blank=True)
+    plusone = models.BooleanField(default = False)
 
 class ChoiceQuestion(models.Model):
     event = models.ForeignKey(Event,on_delete=models.CASCADE)
