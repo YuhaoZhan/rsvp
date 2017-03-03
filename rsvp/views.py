@@ -119,10 +119,21 @@ def detail2(req):
             text_responses.append([])
             choice_responses.append([])
             for text_question in text_questions:
-                text_responses[index].append(text_question.textresponse_set.filter(username=guest.user.name))
+                ts = text_question.textresponse_set.filter(username=guest.user.name)
+                if ts.count() > 0:
+                    text_responses[index].append(ts.first())
+                else:
+                    tmp = TextResponse(question=text_question,response_text="Not answered yet.",username=guests.user.name)
+                    tmp.save()
+                    text_responses[index].append(tmp)
             
             for choice_question in choice_questions:
-                choice_responses[index].append(choice_question.choice_set.filter(choiceresponse__username=guest.user.name))
+                cs = choice_question.choice_set.filter(choiceresponse__username=guest.user.name)
+                if cs.count() > 0:
+                    choice_responses[index].append(cs)
+                else:    
+                    choice_responses[index].append(choice_question.choice_set.all())
+                
             index += 1
             
         zipped_text_responses = zip(guests, text_responses)
@@ -342,7 +353,7 @@ def save2(req):
             new_response.save()
         response_data = {}
         response_data['result'] = 'save choice response successful'
-        response_data['text'] = new_answer
+        response_data['text'] = new_choice.choice_text
         response_data['cq_id'] = cq.id
         return HttpResponse(
             json.dumps(response_data),
@@ -355,6 +366,45 @@ def save2(req):
         )
 
 
+def finalize1(req):
+    if req.POST:
+        tq_id = req.POST.get("tq_id","")
+        tq = TextQuestion.objects.get(pk=tq_id)
+        tq.finalized = True
+        tq.save()
+        response_data = {}
+        response_data['result'] = 'finalize successful'
+        response_data['tq_id'] = tq.id
+        response_data['finalized'] = tq.finalized
+        return HttpResponse(
+            json.dumps(response_data),
+            content_type = "application/json"
+        )
+    else:
+        return HttpResponse(
+            json.dumps({"nothing to see": "this isnt happening"}),
+            content_type = "application/json"
+        )
+
+def finalize2(req):
+    if req.POST:
+        cq_id = req.POST.get("cq_id","")
+        cq = ChoiceQuestion.objects.get(pk=cq_id)
+        cq.finalized = True
+        cq.save()
+        response_data = {}
+        response_data['result'] = 'finalize successful'
+        response_data['cq_id'] = cq.id
+        response_data['finalized'] = cq.finalized
+        return HttpResponse(
+            json.dumps(response_data),
+            content_type = "application/json"
+        )
+    else:
+        return HttpResponse(
+            json.dumps({"nothing to see": "this isnt happening"}),
+            content_type = "application/json"
+        )
 def viewroom(req):  
     username = req.session.get('username', '')  
     if username != '':  

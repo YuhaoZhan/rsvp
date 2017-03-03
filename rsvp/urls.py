@@ -23,4 +23,7 @@ urlpatterns = [
     url(r'^can_view2/$',views.can_view2),
     url(r'^save1/$',views.save1),
     url(r'^save2/$',views.save2),
+    url(r'^finalize1/$',views.finalize1),
+    url(r'^finalize2/$',views.finalize2),
+
 ]

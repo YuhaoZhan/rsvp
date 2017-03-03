@@ -29,16 +29,14 @@
                 </thead>
                 <tbody>
                     {% for t in item.1 %}
-                    {% if t.count > 0 %}
                     <tr>
-                        <td>{{ t.first.response_text }}</td>
+                    <form method="POST">  
+                        {% csrf_token %}
+                      <td>{{ t.response_text }}</td>
+                            <td><button class="btn btn btn-primary btn-block" style="margin:0px; padding:0px;" onclick="finalize1({{t.question.id}})">Finalize</button></td>
+                    </form>
                     </tr>
-                    {% else %}
-                    <tr>
-                        <td>  Not answered yet.</td>
-                    </tr>
-                    {% endif  %}
-                    {% endfor %}
+                    {% endfor  %}
                 </tbody>
                 
             </table>
@@ -70,15 +68,10 @@
                 </thead>
                 <tbody>
                     {% for t in item.1 %}
-                    {% if t.count > 0 %}
                     <tr>
-                        <td>{{ t.first.choice_text }}</td>
+                      <td>{{ t.first.choice_text }}</td>
+                        <td><button class="btn btn btn-primary btn-block" style="margin:0px; padding:0px;" onclick="finalize2({{t.first.question.id}})">Finalize</button></td>
                     </tr>
-                    {% else %}
-                    <tr>
-                        <td>  Not answered yet.</td>
-                    </tr>
-                    {% endif  %}
                     {% endfor %}
                 </tbody>
                 
@@ -88,4 +81,47 @@
         
     </div>
 </div>
+
+{% block javascript %}
+    <script>
+    
+    function finalize1(id){
+        event.preventDefault()
+        console.log("click finalize btn")
+        console.log(id)
+        
+        $.ajax({
+            url: '/rsvp/finalize1/?id='+id,
+            type: "POST",
+            data: {
+                'tq_id': id,
+                 csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(data){
+                console.log(data)
+            }
+        })
+    }
+
+    function finalize2(id){
+        event.preventDefault()
+        console.log("click finalize btn")
+        console.log(id)
+        
+        $.ajax({
+            url: '/rsvp/finalize2/?id='+id,
+            type: "POST",
+            data: {
+                'cq_id': id,
+                 csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            },
+            success: function(data){
+                console.log(data)
+            }
+        })
+    }
+        
+ </script>
+{% endblock %}   
 {% endblock %}  
+

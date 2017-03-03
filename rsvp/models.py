@@ -32,6 +32,7 @@ class ChoiceQuestion(models.Model):
     event = models.ForeignKey(Event,on_delete=models.CASCADE)
     question_text = models.CharField(max_length=100)
     vendors = models.ManyToManyField(Vendor,blank=True)
+    finalized = models.BooleanField(default=False)
 
     def __unicode__(self):  
         return self.question_text
@@ -51,6 +52,7 @@ class TextQuestion(models.Model):
     event = models.ForeignKey(Event,on_delete=models.CASCADE)
     question_text = models.CharField(max_length=100)
     vendors = models.ManyToManyField(Vendor,blank=True)
+    finalized = models.BooleanField(default=False)
 
     def __unicode__(self):
         return str(self.id)

@@ -38,8 +38,7 @@
                         {% for event in vendor_event %}  
                         <tr>  
                             <td>  <a href="/rsvp/vendor_event/?id={{event.id}}">{{ event.name }}  </td>  
-                            <td>  {{ event.time }}  </td> 
-                            <td><a href="/rsvp/edit/?id={{event.id}}">Edit</a></td>   
+                            <td>  {{ event.time }}  </td>  
                         </tr>  
                         {% endfor %}  
                     </tbody>  
@@ -55,8 +54,7 @@
                         {% for event in guest_event %}  
                         <tr>  
                             <td><a href="/rsvp/guest_event/?id={{event.id}}">{{ event.name }}</a></td>  
-                            <td>  {{ event.time }}  </td>  
-                            <td><a href="/rsvp/edit/?id={{event.id}}">Edit</a></td>   
+                            <td>  {{ event.time }}  </td>     
                         </tr>  
                         {% endfor %}  
                     </tbody>  

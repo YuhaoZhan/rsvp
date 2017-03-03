@@ -35,15 +35,24 @@
 			<tbody>
 				{% for t in text_responses %}
 				<tr>
-				<form method="POST">  
-        				{% csrf_token %}
-					<td>
+        			{% if t.question.finalized == False %}
+        			<td>
 						<input id="tr{{t.id}}" style="height:100%; width:100%;" type="text" value = "{{ t.response_text }}"> 
 					</td>
-					<td>
-            			<button class="btn btn btn-primary btn-block" style="margin:0px; padding:0px;" onclick="save1({{t.id}})">Save Change</button>
-          			</td>  
-          		</form> 
+        			<form method="POST">  
+        				{% csrf_token %}
+						<td>
+            			<button class="btn btn btn-primary btn-block" style="margin:0px; padding:0px;" 	onclick="save1({{t.id}})">Save Change</button>
+          				</td>
+          			</form> 
+          			{% else %}
+          			<td>
+						<input id="tr{{t.id}}" style="height:100%; width:100%;" type="text" value = "{{ t.response_text }}" readonly> 
+					</td>
+          			<td>
+            			<button class="btn btn btn-primary btn-block" style="margin:0px; padding:0px;" onclick="alertbox()">Save Change</button>
+          			</td>
+          			{% endif %}
 				</tr> 
 				{% endfor %}
 				
@@ -87,9 +96,15 @@
 				{% for cr in choice_responses %}
 				<tr>
 					<td id="c{{cr.first.question.id}}">  {{cr.first.choice_text}} </td>
+					{% if cr.first.question.finalized == False %}
 					<td>
             			<button class="btn btn btn-primary btn-block" style="margin:0px; padding:0px;" onclick="save2({{cr.first.question.id}})">Save Change</button> 
           			</td> 
+          			{% else %}
+          			<td>
+            			<button class="btn btn btn-primary btn-block" style="margin:0px; padding:0px;" onclick="alertbox()">Save Change</button> 
+          			</td>
+          			{% endif %}
 				</tr>
 
 				{% endfor %}
@@ -139,6 +154,11 @@
                 console.log(data)
             }
         })
+    }
+
+    function alertbox(){
+
+    	alert("this question is finalized!");
     }
  </script>
   
